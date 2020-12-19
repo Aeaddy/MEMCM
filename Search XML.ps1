@@ -1,0 +1,1 @@
+﻿get-content C:\Users\aeaddy\Desktop\UpdateExport.xml -ReadCount 1000 | foreach { $_ -match "<name><" }

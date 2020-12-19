@@ -1,0 +1,35 @@
+ModifyExistingADR.ps1
+Author: Adam Eaddy, ITS Partners, aeaddy@itsdelivers.com
+
+This script will accept pacakge name and package path input parameters.  
+
+Requirements:
+1. This script must be run on a Configuration Manager Primary Site Server.
+2. This script must be run with Architect rights on the Configuration Manager Primary Site Server.
+3. This script requires 2 input parameters:
+ -Package Name (SUPKGNAME)
+ -Package Path (SUPPATHNAME) (Provide the Package Name without the year.  The year value will be automatically modified every year.)
+(e.g. ModifyExistingADR.ps1 -SUPKGNAME "Software Updates"
+
+
+This script is setup to run as a scheduled task on the Configuration Manager Primary Site Server.
+This script runs on Jan. 1 of every new year.
+This script must be run by an account with "Architect" rights in the Configuration Manager environment.
+
+This script will perform the following actions:
+1. Determine the current and previous year.
+2. Check to see if a package already exists with the new (current) year associated to it.
+3. Checks for the existence of the new package path with the new (current) year associated to it.
+4. Creates the new package source location. (Path provided + Year) (\\server\share\2016)
+5. Creates the new Software Update Package. (Package Name Provided + Year) (Software Updates 2016)
+6. Distributes the empty package to ALL Distribution Point Groups!
+7. Determines previous years package name. (Using provided name + Last Year) (Software Updates 2015)
+8. Checks all Automatic Deployment Rules to see if they are using previous years package.
+9. Update all Automatic Deployment Rules using the previous years package to use the new (current) years package.
+10. THis script will log all actions to you CfgMgr log path to a log named ModifyADR.log.
+
+There is a scheduled task on the Primary Site Server running yearly.
+Task Name: Update Yearly ADR
+Task Schedule: Jan 1 1:00 AM Yearly
+DUS - Task Action: Powershell.exe -executionpolicy bypass -file "D:\CfgMgr Setup Files\Configuration Scripts\Modifiy ADR Yearly\ModifyExistingADR.ps1" -SUPKGNAME "Software Updates" -SUPPATHNAME "\\w0982dappv0601\sources\Software Updates"
+IUS - Task Action: Powershell.exe -executionpolicy bypass -file "D:\CfgMgr Setup Files\Configuration Scripts\Modifiy ADR Yearly\ModifyExistingADR.ps1" -SUPKGNAME "Software Updates" -SUPPATHNAME "\\ius.meijer.com\infra\sccm\Software Updates"
